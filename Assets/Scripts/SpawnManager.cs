@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SpawnManager : MonoBehaviour
 {
     public int HPPerWave;
     public int WaveCount;
     public GameObject Player;
+    public GameObject WaveCounterUI;
+    public Text text;
+
     public bool AreAllEnemiesDead;
+
 
     [SerializeField]
     private GameObject electroBallPrefab;
@@ -27,10 +32,12 @@ public class SpawnManager : MonoBehaviour
     private PlayerHealth playerHealth;
 
 
+
     private void Awake()
     {
         playerHealth = Player.GetComponent<PlayerHealth>();
         playerHealth.activeEnemeis = spawnedEnemeies;
+        playerHealth.waveCountPnl = WaveCounterUI;
        // WaveCount = 0;
     }
 
@@ -46,9 +53,11 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnWave()
     {
         WaveCount++;
-        //Debug.Log("SPAWNING WAVE = " + WaveCount);
-        // Pause for like 1 sec to show wave count
-        
+
+        WaveCounterUI.SetActive(true);
+        text.text = "Wave :" + WaveCount;
+        yield return new WaitForSeconds(2);
+        WaveCounterUI.SetActive(false);
 
         if (WaveCount <= 8)
         {
@@ -159,6 +168,7 @@ public class SpawnManager : MonoBehaviour
     {
         playerHealth.MaxHealth += HPPerWave;
         playerHealth.ResetHP();
+        playerHealth.Wavecount = WaveCount;
         //play Anim for extra life
     }
 }

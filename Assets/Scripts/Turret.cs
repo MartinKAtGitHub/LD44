@@ -29,7 +29,7 @@ public class Turret : MonoBehaviour
 
     void Start()
     {
-        fireTimer = Random.Range(0f, 4f); ;
+        fireTimer = Random.Range(0, 4); ;
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = audioClip;
     }

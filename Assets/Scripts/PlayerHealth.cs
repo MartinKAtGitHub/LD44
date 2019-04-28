@@ -31,10 +31,13 @@ public class PlayerHealth : MonoBehaviour
 
     private AudioSource audioSource;
     private bool isAlive;
+    public GameObject waveCountPnl;
 
     public Text text;
-
     public GameObject GameOverPnl;
+    public GameObject JokePnl;
+
+    public int Wavecount;
 
     public int MaxHealth
     { get
@@ -135,6 +138,13 @@ public class PlayerHealth : MonoBehaviour
 
     void DEATH()
     {
+        if(Wavecount <= 5)
+        {
+            JokePnl.SetActive(true);
+        }
+
+
+        waveCountPnl.SetActive(true);
         isAlive = false;
 
         GameOverPnl.SetActive(true);
