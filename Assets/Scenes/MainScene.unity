@@ -3801,7 +3801,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Thank you for playing my LD 44 game !! \n\n\nTry again ?"
+  m_Text: "Thank you for playing my LD 44 game !! \n\nShout out to my Homies over
+    at SteamPunkProgrammer!!!! \nPUNKBOIS!!"
 --- !u!222 &918094002
 CanvasRenderer:
   m_ObjectHideFlags: 0
