@@ -8,7 +8,6 @@ public class Turret : MonoBehaviour
     public GameObject GunBarrel;
     public GameObject Bullet;
     public float bulletSpeed;
-    public float DetectionRange;
 
     public int Dmg;
     /// <summary>
@@ -16,54 +15,31 @@ public class Turret : MonoBehaviour
     /// </summary>
     public float ShootEvery; // Eks 5 shots every sec 5/sec
 
-    public List<GameObject> targets;
-    [SerializeField] private GameObject primaryTarget;
+    public GameObject primaryTarget;
 
     private float fireTimer;
 
     //  private Vector3 m_lastKnownPosition = Vector3.zero;
     private Quaternion lookAtRotation;
 
+    public AudioClip audioClip;
+    private AudioSource audioSource;
+
 
 
     void Start()
     {
-        fireTimer = 0;
-        GetComponent<CircleCollider2D>().radius = DetectionRange;
+        fireTimer = Random.Range(0f, 4f); ;
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = audioClip;
     }
 
 
     void Update()
     {
-        //RemoveDestroyedTargets();
-        //TargetNearest();
-        //TrackTarget();
-        //ShootTarget();
+        TrackTarget();
+        ShootTarget();
     }
-
-
-    void TargetNearest()
-    {
-        List<GameObject> validTargets = GetValidTargets();
-
-        GameObject curTarget = null;
-        float closestDist = 0.0f;
-
-        for (int i = 0; i < validTargets.Count; i++)
-        {
-            //RemoveDestroyedTargets();
-            float dist = Vector3.Distance(transform.position, validTargets[i].transform.position);
-
-            if (!curTarget || dist < closestDist)
-            {
-                curTarget = validTargets[i];
-                closestDist = dist;
-            }
-        }
-
-        primaryTarget = curTarget;
-    }
-
 
     private void TrackTarget()
     {
@@ -74,80 +50,35 @@ public class Turret : MonoBehaviour
             lookAtRotation = Quaternion.Euler(0, 0, rotZ);
             GunBarrel.transform.rotation = lookAtRotation;
         }
+        else
+        {
+            Debug.LogError("Cant Find Player");
+        }
     }
 
-    //void ShootTarget()
-    //{
-    //    if (!primaryTarget)
-    //    {
-    //        return;
-    //    }
-    //    else
-    //    {
-    //        fireTimer += Time.deltaTime;
-
-    //        if (fireTimer >= ShootEvery)
-    //        {
-    //            var bulletClone = Instantiate(Bullet, GunBarrel.transform.position, lookAtRotation);
-    //            var bullet = bulletClone.GetComponent<TurretBullet>();
-    //            bullet.MyTurret = this;
-    //            bullet.FireProjectile(GunBarrel, primaryTarget, Dmg, bulletSpeed);
-    //            fireTimer = 0.0f;
-    //        }
-    //    }
-    //}
-
-    public List<GameObject> GetValidTargets()
+    void ShootTarget()
     {
-        return targets;
+        if (!primaryTarget)
+        {
+            return;
+        }
+        else
+        {
+            fireTimer += Time.deltaTime;
+
+            if (fireTimer >= ShootEvery)
+            {
+                var pos = new Vector3(GunBarrel.transform.position.x, GunBarrel.transform.position.y, 0);
+                var bulletClone = Instantiate(Bullet, pos, lookAtRotation);
+                var bullet = bulletClone.GetComponent<TurretBullet>();
+                bullet.MyTurret = this;
+                bullet.FireProjectile(GunBarrel, primaryTarget, Dmg, bulletSpeed);
+
+                audioSource.pitch = Random.Range(.75f, 1.25f);
+                audioSource.Play();
+
+                fireTimer = 0.0f;
+            }
+        }
     }
-
-
-    //void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.CompareTag(EnemyTag))
-    //    {
-    //        Debug.Log("Added Enemy");
-    //        other.gameObject.GetComponent<EnemyHealthSystem>().DeathEvent += RemoveTargetFromValidList;
-    //        targets.Add(other.gameObject);
-
-    //        //Get Ref and add to EVENT here 
-    //    }
-    //}
-
-    //void OnTriggerExit2D(Collider2D other)
-    //{
-    //    for (int i = 0; i < targets.Count; i++)
-    //    {
-    //        if (other.gameObject == targets[i])
-    //        {
-    //            // Debug.Log("Removed Enemy");
-    //            targets.Remove(other.gameObject);
-    //            return;
-    //        }
-    //    }
-    //}
-
-
-    //public void RemoveTargetFromValidList(GameObject target)
-    //{
-    //    // Debug.Log("REMOVING = " + target.name);
-    //    target.GetComponent<EnemyHealthSystem>().DeathEvent -= RemoveTargetFromValidList;
-    //    targets.Remove(target);
-
-    //}
-
-
-
-    //private void RemoveDestroyedTargets()
-    //{
-    //    for (int i = 0; i < targets.Count; i++)
-    //    {
-    //        if (!targets[i].gameObject)
-    //        {
-    //            //Debug.LogWarning("REMOVEING DESTOREUD TARGET FROM LIST");
-    //            targets.RemoveAt(i);
-    //        }
-    //    }
-    //}
 }

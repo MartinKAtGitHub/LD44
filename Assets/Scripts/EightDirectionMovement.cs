@@ -29,6 +29,7 @@ public class EightDirectionMovement : MonoBehaviour
         }
     }
 
+    private bool playerDead;
     void Awake()
     {
 
@@ -62,17 +63,20 @@ public class EightDirectionMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        MovementLogicVelocity();
-
-        PlayerRunningAnims();
-
-        if (Direction.x > 0 && !facingRigth)
+        if(!playerDead)
         {
-            Flip();
-        }
-        else if (Direction.x < 0 && facingRigth)
-        {
-            Flip();
+            MovementLogicVelocity();
+
+            PlayerRunningAnims();
+
+            if (Direction.x > 0 && !facingRigth)
+            {
+                Flip();
+            }
+            else if (Direction.x < 0 && facingRigth)
+            {
+                Flip();
+            }
         }
     }
 
@@ -103,6 +107,16 @@ public class EightDirectionMovement : MonoBehaviour
     {
         //playerRigBdy.velocity = new Vector2( Input.GetAxis("Horizontal") * moveSpeed,  Input.GetAxis("Vertical") * moveSpeed);
         playerRigBdy.velocity = new Vector2(direction.x * moveSpeed, direction.y * moveSpeed);
+    }
+
+
+    public void Ondeath()
+    {
+        playerRigBdy.velocity = Vector2.zero;
+        playerRigBdy.isKinematic = true;
+        characterAnimator.SetBool("Running", false);
+        characterAnimator.SetTrigger("Death");
+        playerDead = true;
     }
 
 }

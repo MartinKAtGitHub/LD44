@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class AIBehaviourSeek : MonoBehaviour
 {
-    [SerializeField]
-    private Transform target;
+    
+    public Transform target;
     private Rigidbody2D rgb2d;
 
 

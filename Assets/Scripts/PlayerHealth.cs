@@ -1,24 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
+    private PlayerAttack playerAttack;
+    private EightDirectionMovement directionMovement;
+
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
     [SerializeField]
-    private int playerHealth;
+    private int maxHealth;
+    public int currentHealth;
+
     [SerializeField]
     private float IframeTime = 3;
 
     private float IframeTimer;
-    private bool Iframes =false;
+    private bool Iframes = false;
 
     private bool flash = true;
+    public List<GameObject> activeEnemeis;
+
+    [SerializeField]
+    AudioClip onHit;
+    [SerializeField]
+    AudioClip onDeath;
+
+    private AudioSource audioSource;
+    private bool isAlive;
+
+    public Text text;
+
+    public GameObject GameOverPnl;
+
+    public int MaxHealth
+    { get
+        {
+            return maxHealth;
+        }
+        set
+        {
+            maxHealth = value;
+
+        }
+    }
+
     private void Start()
     {
+
+        currentHealth = MaxHealth;
+        text.text = currentHealth.ToString();
+
+        isAlive = true;
+
         IframeTimer = IframeTime;
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+        playerAttack = GetComponent<PlayerAttack>();
+        directionMovement = GetComponent<EightDirectionMovement>();
+        audioSource = GetComponent<AudioSource>();
     }
     private void Update()
     {
@@ -36,44 +81,72 @@ public class PlayerHealth : MonoBehaviour
 
     public void PlayerDmgOnAttack(int dmg)
     {
-        playerHealth -= dmg;
-        Debug.Log("Player DMG" + playerHealth);
-
-        if (playerHealth <= 0)
+        if(isAlive)
         {
-            // play death anim
-            Destroy(this.gameObject);
+            currentHealth -= dmg;
+           // audioSource.clip = onHit;
+           // audioSource.Play();
+            text.text = currentHealth.ToString();
+
+            if (currentHealth <= 0)
+            {
+                DEATH();
+            }
         }
     }
 
     public void PlayerTakeDmg(int dmg)
     {
-        if (!Iframes)
+        if(isAlive)
         {
-            playerHealth -= dmg;
-            Debug.Log("Player DMG" + playerHealth);
-
-            if (playerHealth <= 0)
+            if (!Iframes)
             {
-                // play death anim
-                Destroy(this.gameObject);
+                currentHealth -= dmg;
+                audioSource.clip = onHit;
+                audioSource.Play();
+                text.text = currentHealth.ToString();
+
+                if (currentHealth <= 0)
+                {
+
+                    DEATH();
+
+                    //Destroy(this.gameObject);
+                }
+
+                InvokeRepeating("PlayerIframes", 0, 0.1f);
+                Iframes = true;
             }
-
-            InvokeRepeating("PlayerIframes", 0, 0.1f);
-            Iframes = true;
         }
-        else
-        {
-            Debug.Log("Player has I frames");
-        }
-
     }
 
     private void PlayerIframes()
     {
-            flash = !flash;
-            spriteRenderer.enabled = flash;
+        flash = !flash;
+        spriteRenderer.enabled = flash;
     }
 
 
+    public void ResetHP()
+    {
+        currentHealth = MaxHealth;
+        text.text = currentHealth.ToString();
+    }
+
+    void DEATH()
+    {
+        isAlive = false;
+
+        GameOverPnl.SetActive(true);
+
+        audioSource.clip = onDeath;
+        audioSource.Play();
+
+        directionMovement.Ondeath();
+        directionMovement.enabled = false;
+        playerAttack.enabled = false;
+
+        CancelInvoke();
+        enabled = false;
+    }
 }

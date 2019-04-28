@@ -9,7 +9,7 @@ public class DoDmgToEnemies : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            Debug.Log($"HIT{collision.gameObject.name}");
+           // Debug.Log($"HIT{collision.gameObject.name}");
             collision.gameObject.GetComponent<EnemyHealth>().EnemyTakeDmg(1);
         }
     }

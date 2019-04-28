@@ -11,6 +11,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField]
     private PlayerHealth playerHealth;
 
+   
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +19,7 @@ public class PlayerAttack : MonoBehaviour
         playerAnimator = GetComponentInChildren<Animator>();
         directionMovement =  GetComponentInChildren<EightDirectionMovement>();
         playerHealth = GetComponent<PlayerHealth>();
+      
     }
 
     // Update is called once per frame
@@ -26,9 +28,10 @@ public class PlayerAttack : MonoBehaviour
         
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("ATTACK");
+            //Debug.Log("ATTACK");
             playerAnimator.SetTrigger("Attack");
             playerHealth.PlayerDmgOnAttack(1);
+           // audioSource.Play();
         }
 
     }
